@@ -1,204 +1,279 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-###############################Install Related Packages #######################
-if (!require("shiny")) {
-    install.packages("shiny")
-    library(shiny)
-}
-if (!require("leaflet")) {
-    install.packages("leaflet")
-    library(leaflet)
-}
-if (!require("leaflet.extras")) {
-    install.packages("leaflet.extras")
-    library(leaflet.extras)
-}
-if (!require("dplyr")) {
-    install.packages("dplyr")
-    library(dplyr)
-}
-if (!require("magrittr")) {
-    install.packages("magrittr")
-    library(magrittr)
-}
-if (!require("mapview")) {
-    install.packages("mapview")
-    library(mapview)
-}
-if (!require("leafsync")) {
-    install.packages("leafsync")
-    library(leafsync)
+library(shinydashboard)
+library(shiny)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(highcharter)
+library(lubridate)
+library(stringr)
+library(withr)
+library(treemap)
+library(DT)
+library(shinyBS)
+library(shinyjs)
+library(WDI)
+library(geosphere)
+library(magrittr)
+library(shinycssloaders)
+library(timevis)
+library(leaflet)
+
+Longitude =c(-73.865433,-73.949997,-73.971321,-73.769417,-74.151535)
+Latitude = c(40.837048,40.650002,40.776676,40.742054,40.579021)
+
+#read four datasets
+e_18 = read.csv("C:/Users/Chenghao Lu/Documents/GitHub/ads-spring2023-project2-group2/data/2018.csv",na.strings="Not Available")
+e_19 = read.csv("C:/Users/Chenghao Lu/Documents/GitHub/ads-spring2023-project2-group2/data/2019.csv",na.strings="Not Available")
+e_20 = read.csv("C:/Users/Chenghao Lu/Documents/GitHub/ads-spring2023-project2-group2/data/2020.csv",na.strings="Not Available")
+e_21 = read.csv("C:/Users/Chenghao Lu/Documents/GitHub/ads-spring2023-project2-group2/data/2021.csv",na.strings="Not Available")
+
+# data in 2018
+df1 = data.frame(electricity_consumption = e_18$Electricity.Use...Grid.Purchase..kWh.,
+                 gas_consumption = e_18$Natural.Gas.Use..kBtu.,
+                 water_consumption = e_18$Water.Use..All.Water.Sources...kgal.,
+                 Borough = e_18$Borough,
+                 Type = e_18$Primary.Property.Type...Self.Selected
+)
+colnames(df1)[1] <- "Electricity"
+colnames(df1)[2] <- "Natural_Gas"
+colnames(df1)[3] <- "Water"
+df1_electricity = df1 %>% select("Electricity","Borough","Type") 
+df1_gas = df1 %>% select("Natural_Gas","Borough","Type") 
+df1_water = df1 %>% select("Water","Borough","Type") 
+
+# data in 2019
+
+df2 = data.frame(electricity_consumption = e_19$Electricity.Use...Grid.Purchase..kWh.,
+                 gas_consumption = e_19$Natural.Gas.Use..kBtu.,
+                 water_consumption = e_19$Water.Use..All.Water.Sources...kgal.,
+                 Borough = e_19$Borough,
+                 Type = e_19$Primary.Property.Type...Self.Selected
+)
+colnames(df2)[1] <- "Electricity"
+colnames(df2)[2] <- "Natural_Gas"
+colnames(df2)[3] <- "Water"
+df2_electricity = df2 %>% select("Electricity","Borough","Type") 
+df2_gas = df2 %>% select("Natural_Gas","Borough","Type") 
+df2_water = df2 %>% select("Water","Borough","Type")
+
+# data in 2020
+
+df3 = data.frame(electricity_consumption = e_20$Electricity.Use...Grid.Purchase..kWh.,
+                 gas_consumption = e_20$Natural.Gas.Use..kBtu.,
+                 water_consumption = e_20$Water.Use..All.Water.Sources...kgal.,
+                 Borough = e_20$Borough,
+                 Type = e_20$Primary.Property.Type...Self.Selected
+)
+colnames(df3)[1] <- "Electricity"
+colnames(df3)[2] <- "Natural_Gas"
+colnames(df3)[3] <- "Water"
+df3_electricity = df3 %>% select("Electricity","Borough","Type") 
+df3_gas = df3 %>% select("Natural_Gas","Borough","Type") 
+df3_water = df3 %>% select("Water","Borough","Type")
+
+# data in 2021
+
+df4 = data.frame(electricity_consumption = e_21$Electricity.Use...Grid.Purchase..kWh.,
+                 gas_consumption = e_21$Natural.Gas.Use..kBtu.,
+                 water_consumption = e_21$Water.Use..All.Water.Sources...kgal.,
+                 Borough = e_21$Borough,
+                 Type = e_21$Primary.Property.Type...Self.Selected
+)
+colnames(df4)[1] <- "Electricity"
+colnames(df4)[2] <- "Natural_Gas"
+colnames(df4)[3] <- "Water"
+df4_electricity = df4 %>% select("Electricity","Borough","Type")
+df4_gas = df4 %>% select("Natural_Gas","Borough","Type") 
+df4_water = df4 %>% select("Water","Borough","Type")
+
+
+
+
+target_gen =function(year,energy,property){
+  
+  
+  if(year ==2018){
+    
+    if(energy =="Electricity"){
+      
+      result = df1_electricity %>% filter( Electricity!= "Not Available",Borough != "") %>% 
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Electricity),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+    }
+    
+    if(energy =="Natural Gas"){
+      
+      result = df1_gas %>% filter( Natural_Gas!= "Not Available",Borough != "") %>% 
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Natural_Gas),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+      
+    }
+    if(energy =="Water"){
+      
+      result = df1_water %>% filter( Water!= "Not Available",Borough != "") %>% 
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Water),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+      
+    }
+  }
+  
+  if(year ==2019){
+    
+    if(energy =="Electricity"){
+      
+      result = df2_electricity %>% filter( Electricity!= "Not Available",Borough != "") %>% 
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Electricity),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+    }
+    
+    if(energy =="Natural Gas"){
+      
+      result = df2_gas %>% filter( Natural_Gas!= "Not Available",Borough != "") %>% 
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Natural_Gas),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+      
+    }
+    if(energy =="Water"){
+      
+      result = df2_water %>% filter( Water!= "Not Available",Borough != "") %>% 
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Water),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+      
+    }
+  }
+  
+  if(year ==2020){
+    
+    if(energy =="Electricity"){
+      
+      result = df3_electricity %>% filter( Electricity!= "Not Available",Borough != "") %>% 
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Electricity),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+    }
+    
+    if(energy =="Natural Gas"){
+      
+      result = df3_gas %>% filter( Natural_Gas!= "Not Available",Borough != "")
+      result$Natural_Gas = suppressWarnings(as.numeric(result$Natural_Gas))
+      result = result  %>% drop_na()
+      result = result %>% group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Natural_Gas),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+      
+    }
+    if(energy =="Water"){
+      
+      
+      result = df3_water %>% filter( Water!= "Not Available",Borough != "") %>% 
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Water),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+      
+      
+    }
+  }
+  
+  if(year ==2021){
+    
+    if(energy =="Electricity"){
+      
+      
+      result = df4_electricity %>% filter( Electricity!= "Not Available",Borough != "")
+      result$Electricity = suppressWarnings(as.numeric(result$Electricity))
+      result = result  %>% drop_na()
+      result = result %>%
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Electricity),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+    }
+    
+    if(energy =="Natural Gas"){
+      
+      result = df4_gas %>% filter( Natural_Gas!= "Not Available",Borough != "") 
+      result$Natural_Gas = suppressWarnings(as.numeric(result$Natural_Gas))
+      result = result  %>% drop_na()
+      result = result %>%
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Natural_Gas),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+      
+    }
+    if(energy =="Water"){
+      
+      result = df4_water %>% filter( Water!= "Not Available",Borough != "") %>% 
+        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Water),number=n(),.groups="drop") %>% 
+        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
+      
+    }
+  }
+  return(result)
 }
 
-#Data Processing
-total_citi_bike_df = read.csv('../data/citibike_data.csv')
-##compute the daily in and out difference for the station
-total_citi_bike_df$day_diff = total_citi_bike_df$endcount - total_citi_bike_df$startcount
-#assign each column to weekend or weekday
-total_citi_bike_df$weekend_or_weekday = ifelse(total_citi_bike_df$weekday %in% c('Saturday','Sunday'), "Weekend", "Weekday")
-
-#station info
-citi_bike_station_info <- total_citi_bike_df[,c('station_id','station_name','station_longitude','station_latitude')]
-#remove the duplicates based on station id 
-citi_bike_station_info <- citi_bike_station_info[!duplicated(citi_bike_station_info[ , c("station_id")]),]
-
-#split the bike data to pre-covid and covid time period
-citi_bike_pre_covid_df = total_citi_bike_df[difftime(total_citi_bike_df$date,"2019-05-31")<=0,] #2019-05-01 ~ 2019-05-31
-citi_bike_covid_df = total_citi_bike_df[difftime(total_citi_bike_df$date,"2020-04-30")>=0,] #2020-05-01 ~ 2021-05-31
 
 
-# Define server logic required to draw a histogram
+
 shinyServer(function(input, output) {
+  
 
-    ## Map Tab section
+ 
+  output$mymap <- renderLeaflet({
     
-    output$left_map <- renderLeaflet({
+    E = input$map_energy
+    P = input$map_type
+    Y = input$map_year
+    df = target_gen(Y,E,P)
+    qpal <- colorNumeric("RdYlBu", domain =df$Avg_consumption)
     
-    #adjust for weekday/weekend effect
-    if (input$adjust_time =='Overall') {
-        leaflet_plt_df <- citi_bike_pre_covid_df %>% 
-                            group_by(station_id) %>%
-                            summarise(total_start_count = sum(startcount),
-                                      total_end_count = sum(endcount),
-                                      total_day_diff = sum(day_diff),
-                                      total_diff_percentage = sum(day_diff)/sum(startcount),
-                            ) %>% left_join(citi_bike_station_info,by='station_id')
-    } else {
-        leaflet_plt_df <- citi_bike_pre_covid_df %>% 
-                            filter(weekend_or_weekday == input$adjust_time) %>%
-                            group_by(station_id) %>%
-                                summarise(total_start_count = sum(startcount),
-                                          total_end_count = sum(endcount),
-                                          total_day_diff = sum(day_diff),
-                                          total_diff_percentage = sum(day_diff)/sum(startcount),
-                                ) %>% left_join(citi_bike_station_info,by='station_id')
-                            } 
-
-        
-    map_2019 <- leaflet_plt_df %>%
-         leaflet(options = leafletOptions(minZoom = 11, maxZoom = 13)) %>%
-         addTiles() %>%
-         addProviderTiles("CartoDB.Positron",
-                          options = providerTileOptions(noWrap = TRUE)) %>%
-         setView(-73.9834,40.7504,zoom = 12)
-     
-     if (input$adjust_score == 'start_cnt') {
-         map_2019 %>%
-             addHeatmap(
-                        lng=~station_longitude,
-                        lat=~station_latitude,
-                        intensity=~total_start_count,
-                        max=4000,
-                        radius=8,
-                        blur=10)
-     }else if (input$adjust_score == 'end_cnt') {
-         map_2019 %>%
-             addHeatmap(
-                        lng=~station_longitude,
-                        lat=~station_latitude,
-                        intensity=~total_end_count,
-                        max=4000,
-                        radius=8,
-                        blur=10)
-     } else if (input$adjust_score == 'day_diff_absolute'){
-         map_2019 %>%
-             addHeatmap(
-                        lng=~station_longitude,
-                        lat=~station_latitude,
-                        intensity=~total_day_diff,
-                        max=50,
-                        radius=8,
-                        blur=10)
-         
-     }else if (input$adjust_score == 'day_diff_percentage'){
-         map_2019 %>%
-             addHeatmap(
-                        lng=~station_longitude,
-                        lat=~station_latitude,
-                        intensity=~total_diff_percentage,#change to total day diff percentage
-                        max=0.1,
-                        radius=8,
-                        blur=10)
-         
-     }
-     }) #left map plot
+    if (E =="Electricity"){
+    m <- leaflet(data = df) %>%
+      addTiles() %>%
+      addCircles(lng = ~Longitude, 
+                 lat = ~Latitude,
+                 color = ~qpal(df$Avg_consumption),fillOpacity = 1,
+                 radius = 750+df$number,
+                 popup = paste("Average_Consumption", df$Avg_consumption, "<br>",
+                               "Borough:", df$Borough,"<br>",
+                               "Number of Property type buildings:", df$number)
+      ) %>%
+      
+      addLegend("bottomright", pal=qpal, values = ~df$Avg_consumption, labFormat = labelFormat(suffix = "kwh"),
+                title = "Electricity Consumption", opacity = 1)
     
-    output$right_map <- renderLeaflet({
-        #adjust for weekday/weekend effect
-        if (input$adjust_time =='Overall') {
-            leaflet_plt_df <- citi_bike_covid_df %>% 
-                group_by(station_id) %>%
-                summarise(total_start_count = sum(startcount),
-                          total_end_count = sum(endcount),
-                          total_day_diff = sum(day_diff),
-                          total_diff_percentage = sum(day_diff)/sum(startcount),
-                ) %>% left_join(citi_bike_station_info,by='station_id')
-        } else {
-            leaflet_plt_df <- citi_bike_covid_df %>% 
-                filter(weekend_or_weekday == input$adjust_time) %>%
-                group_by(station_id) %>%
-                summarise(total_start_count = sum(startcount),
-                          total_end_count = sum(endcount),
-                          total_day_diff = sum(day_diff),
-                          total_diff_percentage = sum(day_diff)/sum(startcount),
-                ) %>% left_join(citi_bike_station_info,by='station_id')
-        } 
-        #initial the map to plot on
-        map_2020 <- leaflet_plt_df %>%
-            leaflet(options = leafletOptions(minZoom = 11, maxZoom = 13)) %>%
-            addTiles() %>%
-            addProviderTiles("CartoDB.Positron",
-                             options = providerTileOptions(noWrap = TRUE)) %>%
-            setView(-73.9834,40.7504,zoom = 12) 
+    }
+    
+  
+    if (E == "Natural Gas"){
+      m <- leaflet(data = df) %>%
+        addTiles() %>%
+        addCircles(lng = ~Longitude, 
+                   lat = ~Latitude,
+                   color = ~qpal(df$Avg_consumption),fillOpacity = 1,
+                   radius = 750+df$number,
+                   popup = paste("Average_Consumption", df$Avg_consumption, "<br>",
+                                 "Borough:", df$Borough,"<br>",
+                                 "Number of Property type buildings:", df$number)
+        ) %>%
         
-        if (input$adjust_score == 'start_cnt') {
-            map_2020 %>%
-                addHeatmap(
-                           lng=~station_longitude,
-                           lat=~station_latitude,
-                            intensity=~total_start_count, #change to total start count
-                            max=4000,
-                            radius=8,
-                           blur=10)
-        }else if (input$adjust_score == 'end_cnt') {
-            map_2020 %>%
-                addHeatmap(
-                           lng=~station_longitude,
-                           lat=~station_latitude,
-                           intensity=~total_end_count,#change to total end count
-                           max=4000,
-                           radius=8,
-                           blur=10)
-        } else if (input$adjust_score == 'day_diff_absolute'){
-            map_2020 %>%
-                addHeatmap(
-                           lng=~station_longitude,
-                           lat=~station_latitude,
-                           intensity=~total_day_diff,#change to total day diff
-                           max=50,
-                           radius=8,
-                           blur=10)
-            
-        }else if (input$adjust_score == 'day_diff_percentage'){
-            map_2020 %>%
-                addHeatmap(
-                           lng=~station_longitude,
-                           lat=~station_latitude,
-                           intensity=~total_diff_percentage,#change to total day diff percentage
-                           max=0.1,
-                           radius=8,
-                           blur=10)
-            
-        }
+        addLegend("bottomright", pal=qpal, values = ~df$Avg_consumption, labFormat = labelFormat(suffix = "kBtu"),
+                  title = "Natural Gas Consumption", opacity = 1)
+      
+    }
+    
+    if (E == "Water"){
+      m <- leaflet(data = df) %>%
+        addTiles() %>%
+        addCircles(lng = ~Longitude, 
+                   lat = ~Latitude,
+                   color = ~qpal(df$Avg_consumption),fillOpacity = 1,
+                   radius = 750+df$number,
+                   popup = paste("Average_Consumption", df$Avg_consumption, "<br>",
+                                 "Borough:", df$Borough,"<br>",
+                                 "Number of Property type buildings:", df$number)
+        ) %>%
         
-    }) #right map plot
-
+        addLegend("bottomright", pal=qpal, values = ~df$Avg_consumption, labFormat = labelFormat(suffix = "kgal"),
+                  title = "Water Consumption", opacity = 1)
+      
+    }
+    
+    m
+  })
+  
+  
 })
-
-
