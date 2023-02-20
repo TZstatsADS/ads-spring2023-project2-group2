@@ -121,7 +121,7 @@ sidebar <- dashboardSidebar(
     menuItem("Home", tabName = "Home", icon = icon("home")),
     menuItem("Map", tabName = "Map", icon = icon("compass")),
     menuItem("New Business", tabName = "New_Business", icon = icon("dollar-sign")),
-    menuItem("Closed Business", tabName = "Closed_Business", icon = icon("dollar-sign")),
+    menuItem("Green Energy", tabName = "Green_Energy", icon = icon("compass")),
     menuItem("Appendix", tabName = "Appendix", icon = icon("fas fa-asterisk"))
   ))
 )
@@ -130,7 +130,7 @@ body <- dashboardBody(
   
   
   tabItems(
-    
+    # ------------------ Home ----------------------------------------------------------------
     
     tabItem(tabName = "Home", fluidPage(
       fluidRow(box(width = 15, title = "Introduction", status = "primary",
@@ -153,7 +153,8 @@ body <- dashboardBody(
       ))
     )), # end of home 
     
-    tabItem(tabName = "Map",                                                 # Map plot
+    # ------------------ Map -----------------------------------
+    tabItem(tabName = "Map",                                                 
             fluidPage(
         
                 column(4,
@@ -184,17 +185,39 @@ body <- dashboardBody(
                                    label = "Choose a property type",
                                    choices = c("Office", "Multifamily Housing","Hotel","Retail Store","Manufacturing/Industrial Plant"), 
                                    selected = "Office")
-                       )
-                
-              
-            ),
-            p("*The radius of the circle reflects the number of a certain building type"),
- 
+                       ),
+
+                p("*The radius of the circle reflects the number of a certain building type")
+  
+              ))),
+    # ------------------ Green Energy -----------------------------------
+    tabItem(tabName = "Green_Energy", 
+      fluidPage(
+      
+      # App title ----
+      titlePanel("Buildings Using Green Energy in New York"),
+      
+      # Sidebar layout with input and output definitions ----
+      sidebarLayout(
+        
+        # Sidebar panel for inputs ----
+        sidebarPanel(
+          
+          # Input: Select for year ----
+          selectInput("year",
+                      label = "Choose a year",
+                      choices = c(2018,2019,2020,2021),
+                      selected = 2018)
+        ),
+        
+        # Main panel for displaying outputs ----
+        mainPanel(
+          # Output
+          leafletOutput("green_e")
+        )
+      )
     )
-  
-  
-  
-)
+    ) 
   
 
 )

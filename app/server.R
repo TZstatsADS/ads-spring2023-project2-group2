@@ -12,130 +12,11 @@
 # source("global.R") 
 # Define server ----
 
-
-target_gen =function(year,energy,property){
-  
-  
-  if(year ==2018){
-  
-    if(energy =="Electricity"){
-      
-        result = df1_electricity %>% filter( Electricity!= "Not Available",Borough != "") %>% 
-          group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Electricity),number=n(),.groups="drop") %>% 
-          filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-     }
-  
-    if(energy =="Natural Gas"){
-    
-        result = df1_gas %>% filter( Natural_Gas!= "Not Available",Borough != "") %>% 
-          group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Natural_Gas),number=n(),.groups="drop") %>% 
-          filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-    
-     }
-    if(energy =="Water"){
-    
-        result = df1_water %>% filter( Water!= "Not Available",Borough != "") %>% 
-          group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Water),number=n(),.groups="drop") %>% 
-          filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-    
-     }
-  }
-  
-  if(year ==2019){
-    
-    if(energy =="Electricity"){
-      
-      result = df2_electricity %>% filter( Electricity!= "Not Available",Borough != "") %>% 
-        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Electricity),number=n(),.groups="drop") %>% 
-        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-    }
-    
-    if(energy =="Natural Gas"){
-      
-      result = df2_gas %>% filter( Natural_Gas!= "Not Available",Borough != "") %>% 
-        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Natural_Gas),number=n(),.groups="drop") %>% 
-        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-      
-    }
-    if(energy =="Water"){
-      
-      result = df2_water %>% filter( Water!= "Not Available",Borough != "") %>% 
-        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Water),number=n(),.groups="drop") %>% 
-        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-      
-    }
-  }
-  
-  if(year ==2020){
-    
-    if(energy =="Electricity"){
-      
-      result = df3_electricity %>% filter( Electricity!= "Not Available",Borough != "") %>% 
-        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Electricity),number=n(),.groups="drop") %>% 
-        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-    }
-    
-    if(energy =="Natural Gas"){
-      
-      result = df3_gas %>% filter( Natural_Gas!= "Not Available",Borough != "")
-      result$Natural_Gas = suppressWarnings(as.numeric(result$Natural_Gas))
-      result = result  %>% drop_na()
-      result = result %>% group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Natural_Gas),number=n(),.groups="drop") %>% 
-        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-      
-    }
-    if(energy =="Water"){
-      
-    
-      result = df3_water %>% filter( Water!= "Not Available",Borough != "") %>% 
-        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Water),number=n(),.groups="drop") %>% 
-        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-      
-      
-    }
-  }
-  
-  if(year ==2021){
-    
-    if(energy =="Electricity"){
-      
-      
-      result = df4_electricity %>% filter( Electricity!= "Not Available",Borough != "")
-      result$Electricity = suppressWarnings(as.numeric(result$Electricity))
-      result = result  %>% drop_na()
-      result = result %>%
-        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Electricity),number=n(),.groups="drop") %>% 
-        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-    }
-    
-    if(energy =="Natural Gas"){
-      
-      result = df4_gas %>% filter( Natural_Gas!= "Not Available",Borough != "") 
-      result$Natural_Gas = suppressWarnings(as.numeric(result$Natural_Gas))
-      result = result  %>% drop_na()
-      result = result %>%
-        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Natural_Gas),number=n(),.groups="drop") %>% 
-        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-      
-    }
-    if(energy =="Water"){
-      
-      result = df4_water %>% filter( Water!= "Not Available",Borough != "") %>% 
-        group_by(Borough,Type) %>%  summarise(Avg_consumption=mean(Water),number=n(),.groups="drop") %>% 
-        filter(Type==property) %>% mutate(Longtitude = Longitude,Latitude = Latitude)
-      
-    }
-  }
-  return(result)
-}
-
-
-
-
+source("../lib/HelperFunction.R")
 shinyServer(function(input, output) {
-  
 
- 
+  ####################### Map Tap ##################  
+  
   output$mymap <- renderLeaflet({
     
     E = input$map_energy
@@ -198,6 +79,25 @@ shinyServer(function(input, output) {
     
     m
   })
+  
+  ####################### Green Energy Tap ##################
+  
+  output$green_e <- renderLeaflet({
+    if (input$year == 2018){
+      out <- mapview(df_green18, xcol = "long", ycol = "lat", crs = 4326, grid = FALSE)@map
+    }
+    if (input$year == 2019){
+      out <- mapview(df_green19, xcol = "long", ycol = "lat", crs = 4326, grid = FALSE)@map
+    }
+    if (input$year == 2020){
+      out <- mapview(df_green20, xcol = "long", ycol = "lat", crs = 4326, grid = FALSE)@map
+    }
+    if (input$year == 2021){
+      out <- mapview(df_green21, xcol = "long", ycol = "lat", crs = 4326, grid = FALSE)@map
+    }
+    return(out)
+  }
+  )
   
   
 })
