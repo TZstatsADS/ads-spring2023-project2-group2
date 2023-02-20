@@ -151,7 +151,8 @@ df4 = data.frame(electricity_consumption = e_21$Electricity.Use...Grid.Purchase.
                  gas_consumption = e_21$Natural.Gas.Use..kBtu.,
                  water_consumption = e_21$Water.Use..All.Water.Sources...kgal.,
                  Borough = e_21$Borough,
-                 Type = e_21$Primary.Property.Type...Self.Selected
+                 Type = e_21$Primary.Property.Type...Self.Selected,
+                 floor_area=e_21$Property.GFA...Calculated..Buildings...ft..
 )
 colnames(df4)[1] <- "Electricity"
 colnames(df4)[2] <- "Natural_Gas"
@@ -159,6 +160,7 @@ colnames(df4)[3] <- "Water"
 df4_electricity = df4 %>% select("Electricity","Borough","Type")
 df4_gas = df4 %>% select("Natural_Gas","Borough","Type") 
 df4_water = df4 %>% select("Water","Borough","Type")
+
 
 ## Get data we need for Green energy in 2018
 df_green18 = data.frame(green_power = e_18$Green.Power...Onsite..kWh.,
@@ -198,4 +200,81 @@ df_green21 <- na.omit(df_green21)
 df_green21 <- df_green21[df_green21$green_power!=0.0,]
 
 
+
+# Get data we need for regression
+df4_floor_area = df4 %>% select("Water", "Natural_Gas", "Electricity", "floor_area", "Type") %>% drop_na()
+df4_floor_area$Natural_Gas = suppressWarnings(as.numeric(as.character(df4_floor_area$Natural_Gas)))
+df4_floor_area$Electricity = suppressWarnings(as.numeric(as.character(df4_floor_area$Electricity)))
+df4_floor_area[1:4] <- log(df4_floor_area[1:4])
+df4_floor_area <- df4_floor_area[!is.infinite(rowSums(df4_floor_area[1:4])),]
+
+
+
+#----------------bar plot data--------------------------
+
+#getting data and adding the year attribute
+
+bar1_electricity <- df1_electricity
+bar1_electricity$year <-2018
+
+bar2_electricity <- df2_electricity
+bar2_electricity$year <-2019
+
+bar3_electricity <- df3_electricity
+bar3_electricity$year <-2020
+
+bar4_electricity <- df4_electricity
+bar4_electricity$year <-2021
+
+bar1_water <- df1_water
+bar1_water$year <-2018
+
+bar2_water <- df2_water
+bar2_water$year <-2019
+
+bar3_water <- df3_water
+bar3_water$year <-2020
+
+bar4_water <- df4_water
+bar4_water$year <-2021
+
+bar1_gas <- df1_gas
+bar1_gas$year <-2018
+
+bar2_gas <- df2_gas
+bar2_gas$year <-2019
+
+bar3_gas <- df3_gas
+bar3_gas$year <-2020
+
+bar4_gas <- df4_gas
+bar4_gas$year <-2021
+
+housing_type <- c('Multifamily Housing','Office','K-12 School')
+
+#combining four years together
+
+bar_water <- rbind(bar1_water,bar2_water,bar3_water,bar4_water)
+bar_gas <- rbind(bar1_gas,bar2_gas,bar3_gas,bar4_gas)
+bar_electricity <- rbind(bar1_electricity,bar2_electricity,bar3_electricity,bar4_electricity)
+
+#define a function to extract necessary data for each year based on energy type
+bar_df <- function(energy_type){
+  if(energy_type=='Water'){
+    #df[df$state %in% c('CA','AZ','PH'),]
+    result=bar_water[bar_water$Type %in% housing_type,]%>% filter(Water != "NA") %>% group_by(year,Type)%>% 
+      summarise(avg_consumption=mean(Water),.groups='drop')
+  }
+  if(energy_type=='Natural_Gas'){
+    result=bar_gas[bar_gas$Type %in% housing_type,]%>% filter(Natural_Gas != "Insufficient access") %>% group_by(year,Type)%>% 
+      summarise(avg_consumption=mean(as.double(Natural_Gas)),.groups='drop')
+  }
+  if(energy_type=='Electricity'){
+    result=bar_electricity[bar_electricity$Type %in% housing_type,]%>% filter(Electricity != "Insufficient access") %>% group_by(year,Type)%>% 
+      summarise(avg_consumption=mean(as.double(Electricity)),.groups='drop')
+  }
+  return(result)
+}
+
+# end of bar plot
 

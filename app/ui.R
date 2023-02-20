@@ -119,8 +119,9 @@ sidebar <- dashboardSidebar(
   
   dashboardSidebar(sidebarMenu(
     menuItem("Home", tabName = "Home", icon = icon("home")),
+
     menuItem("Map", tabName = "Map", icon = icon("compass")),
-    menuItem("New Business", tabName = "New_Business", icon = icon("dollar-sign")),
+
     menuItem("Green Energy", tabName = "Green_Energy", icon = icon("compass")),
     menuItem("Appendix", tabName = "Appendix", icon = icon("fas fa-asterisk"))
   ))
@@ -134,19 +135,21 @@ body <- dashboardBody(
     
     tabItem(tabName = "Home", fluidPage(
       fluidRow(box(width = 15, title = "Introduction", status = "primary",
-                   solidHeader = TRUE, h3("Covid-19 and NYC business"),
-                   h4("By Wendy Doan, Qizhen Yang, Qiao Li, Yandong Xiong, James Bergin Smiley"),
-                   h5("Drawing data from multiple sources, this application provides insight into the economic impact of coronavirus 2019 (COVID-19) on New York’s city economy. The results shed light on both the financial fragility of many businesses, and the significant impact COVID-19 had on these businesses in the weeks after the COVID-19–related disruptions began."),
-                   h5("The application will mainly track down the change in the number of businesses being closed or newly opened across Covid timeline. We divided the businesses into 4 types:", strong("Retail, Service, Food and Beverage, Entertainment")))),
-      fluidRow(box(width = 15, title = "Targeted User", status = "primary", solidHeader=TRUE,
-                   h5("We believe that the application would be useful for anyone who are interested in learning more about the effects of Covid 19"))),
+                   solidHeader = TRUE, h3("NYC Energy Consumption"),
+                   h4("By Chenghao Lu, Tianxiao He, Chenbohan Zhang, Yuxin Liang, Chengqi Cao, Chenyi Jiang "),
+                   h5("Collecting data from Mayor's Office of Climate and Sustainability, this application provides insight into how coronavirus impacted energy consumption in New York’s city. 
+                      provides a comprehensive overview of how energy consumption in New York City changed in response to the COVID-19 pandemic, and sheds light on the potential opportunities 
+                      and challenges for achieving a more sustainable and resilient energy system in the future."),
+                   h5("The application will mainly track down the change in the amount of energy being used across the city. We mainly focus on 3 types of energy:", strong("Water, Natural gas, Electricity")))),
+      fluidRow(box(width = 15, title = "Method Used", status = "primary", solidHeader=TRUE,
+                   h5("///////method//////"))),
       fluidRow(box(width = 15, title = "How to Use The App", status = "primary",
                    solidHeader = TRUE,
                    h5("The application is divided into 5 separate tabs"),
                    tags$div(tags$ul(
-                     tags$li("The", strong("first"), "tab: Introduction"),
-                     tags$li("The", strong("second"), "tab: The detailed ZIP code map shows the extent of Covid 19 outbreak in NYC. It provided key information including: confirmed cases, infection rate, number of business that are closed in the neighborhood"),
-                     tags$li("The", strong("third and fourth"), "tab: stats on recently opened/ closed business during Covid 19, tracked separately for different industries"),
+                     tags$li("The", strong("first"), "tab: Home"),
+                     tags$li("The", strong("second"), "tab: Map"),
+                     tags$li("The", strong("third and fourth"), "tab: Interesting barplot and regression"),
                      tags$li("The", strong("fifth"),"tab: Appendix and data sources")
                      
                    ))
@@ -217,8 +220,116 @@ body <- dashboardBody(
         )
       )
     )
-    ) 
+    ), 
+
+
+
+#------------------Bar Plot----------------------------
+tabItem(tabName = "Time_Series_Analysis", fluidPage(
   
+  # App title ----
+  titlePanel("Energy Usage Before and During Covid"),
+  
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
+    
+    # Sidebar panel for inputs ----
+    sidebarPanel(
+      
+      # Input: Select for the energy type ----
+      selectInput(inputId = "Energy_Type",
+                  label = "Choose an Energy Type:",
+                  choices = c("Water", "Electricity", "Natural_Gas"))
+    ),
+    # Main panel for displaying outputs ----
+    mainPanel(
+      
+      
+      plotOutput(outputId = "bar_plot")
+      
+      
+    )
+  )
+  
+  
+)
+
+
+),#end of bar plot
+
+#-----------------------regression Analysis-----------------
+
+tabItem(tabName = "Regression_Analysis",                                                 # Map plot
+        fluidPage(
+          sidebarPanel(
+            selectInput("independent_var", label="Choose an independent variable",
+                        choices = c("Floor Area")),
+            selectInput("dependent_var", label="Choose an energy type",
+                        choices = c("Water", "Gas", "Electricity")),
+          ),
+          mainPanel(
+            plotOutput("regression")
+          )
+        ),
+), # end of regression 
+
+
+#------------------appendix-----------------------
+
+tabItem(tabName = "Appendix", fluidPage( 
+  titlePanel("Data Sources "),
+  HTML(
+    "
+      <h4> <p> Our data source comes from NYC publicly available dataset on energy and water data for the following years: </h4>          
+      <h4> <p><li>Calendar Year 2018: <a href='https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/4tys-3tzj'>https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/4tys-3tzj</a></li></h4>
+      <h4><li>Calendar Year 2019 : <a href='https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/wcm8-aq5w' target='_blank'> https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/wcm8-aq5w</a></li></h4>
+      <h4><li>Calendar Year 2020 : <a href='https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/usc3-8zwd' target='_blank'>https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/usc3-8zwd</a></li></h4>
+      <h4><li>Calendar Year 2021 : <a hsref='https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/7x5e-2fxh' target='_blank'> https://data.cityofnewyork.us/Environment/Energy-and-Water-Data-Disclosure-for-Local-Law-84-/7x5e-2fxh</a></li></h4>"
+  ),
+
+  
+  titlePanel("Code & Dependencies"),
+  
+  HTML(
+    " <p>The source code for this project can be found at <a href='https://github.com/TZstatsADS/ads-spring2023-project2-group2' target='_blank'> Github link here </a></p>",
+    "<p>This RShiny application was created using the following R packages</p>
+                <table>
+                <tr> <td>
+                <li>shiny</li>
+                <li>dyplr</li>
+                <li>tidyr</li>
+                <li>ggplot2</li>
+                <li>highcharter</li>
+                <li>stringr</li>
+                <li>withr</li>
+                <li>lubridate</li>
+                <li>treemap</li> </td>
+                <td>
+                <li>DT</li>
+                <li>shinyBS</li>
+                <li>shinyjs</li>
+                <li>WDI</li>
+                <li>geosphere</li>
+                <li>magrittr</li>
+                <li>shinycssloaders</li>
+                <li>timevis</li>
+                <li>leaflet</li> </td>
+            </tr></table>"
+  ),
+  
+  titlePanel("Suggestions & Feedbacks"),
+  
+  HTML(
+    " <p>If there are any bugs or feedbacks you want to share, please feel free to contact</p>",
+    " <p>Zhang, Chenbohan (cz2738@columbia.edu)</p>",
+    " <p>He, Tianxiao (th2946@columbia.edu)</p>",
+    " <p>Cao, Shengqi (sc5124@columbia.edu)</p>",
+    " <p>Liang, Yuxin (yl5140@columbia.edu)</p>",
+    " <p>Lu, Chenghao (cl4259@columbia.edu)</p>",
+    " <p>Jiang, Chenyi (cj2740@columbia.edu)</p>")
+)) # end of appendix 
+
+    
 
 )
 )
