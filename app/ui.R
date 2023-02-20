@@ -123,6 +123,8 @@ sidebar <- dashboardSidebar(
     menuItem("Map", tabName = "Map", icon = icon("compass")),
 
     menuItem("Green Energy", tabName = "Green_Energy", icon = icon("compass")),
+    menuItem("Time Series Analysis", tabName = "Time_Series_Analysis", icon = icon("dollar-sign")),
+    menuItem("Regression Analysis", tabName = "Regression_Analysis", icon = icon("dollar-sign")),
     menuItem("Appendix", tabName = "Appendix", icon = icon("fas fa-asterisk"))
   ))
 )
