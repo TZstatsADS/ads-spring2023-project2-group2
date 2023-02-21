@@ -136,23 +136,32 @@ body <- dashboardBody(
     # ------------------ Home ----------------------------------------------------------------
     
     tabItem(tabName = "Home", fluidPage(
-      fluidRow(box(width = 15, title = "Introduction", status = "primary",
+      fluidRow(box(width = 15, title = "Introduction", status = "success", 
                    solidHeader = TRUE, h3("NYC Energy Consumption"),
-                   h4("By Chenghao Lu, Tianxiao He, Chenbohan Zhang, Yuxin Liang, Chengqi Cao, Chenyi Jiang "),
+                   h4("By Chenghao Lu, Tianxiao He, Chenbohan Zhang, Yuxin Liang, Shengqi Cao, Chenyi Jiang "),
                    h5("Collecting data from Mayor's Office of Climate and Sustainability, this application provides insight into how coronavirus impacted energy consumption in New York’s city. 
                       provides a comprehensive overview of how energy consumption in New York City changed in response to the COVID-19 pandemic, and sheds light on the potential opportunities 
                       and challenges for achieving a more sustainable and resilient energy system in the future."),
                    h5("The application will mainly track down the change in the amount of energy being used across the city. We mainly focus on 3 types of energy:", strong("Water, Natural gas, Electricity")))),
-      fluidRow(box(width = 15, title = "Method Used", status = "primary", solidHeader=TRUE,
-                   h5("///////method//////"))),
-      fluidRow(box(width = 15, title = "How to Use The App", status = "primary",
-                   solidHeader = TRUE,
+      fluidRow(box(width = 15, title = "Contribution", status = "success", solidHeader=TRUE,
+                   h5("Chenbohan Zhang was responsible for completing the user interface (UI) of the home page. 
+                   In the section dedicated to the heat map, Chenghao Lu submitted a well-constructed draft of the heat map code. 
+                   Shengqi Cao improved the performance of the page's UI file, 
+                   while Yuxin Liang organized and separated Chenghao's code into global.r and helperfunction.r files. 
+                   In addition to this, Yuxin Liang also carried out the visualization of green energy usage in buildings over a four-year period.
+
+                  Furthermore, Chenbohan Zhang conducted time series analysis on energy consumption patterns during and after the COVID-19 pandemic. 
+                      Tianxiao He, on the other hand, was responsible for conducting regression analysis on energy consumption across various variables. 
+                      Additionally, Tianxiao He designed the UI of the appendix page."))),
+      fluidRow(box(width = 15, title = "How to Use The App", status = "success",
+                   solidHeader = TRUE, 
                    h5("The application is divided into 5 separate tabs"),
                    tags$div(tags$ul(
                      tags$li("The", strong("first"), "tab: Home"),
                      tags$li("The", strong("second"), "tab: Map"),
-                     tags$li("The", strong("third and fourth"), "tab: Interesting barplot and regression"),
-                     tags$li("The", strong("fifth"),"tab: Appendix and data sources")
+                     tags$li("The", strong("third"), "tab: Green Energy"),
+                     tags$li("The", strong("fourth and fifth"), "tab: Interesting barplot and regression"),
+                     tags$li("The", strong("sixth"),"tab: Appendix and data sources")
                      
                    ))
       ))
