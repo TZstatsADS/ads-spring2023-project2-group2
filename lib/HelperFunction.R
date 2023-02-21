@@ -114,3 +114,38 @@ target_gen =function(year,energy,property){
   }
   return(result)
 }
+
+
+reg_gen = function(x,energy){
+  property_types = list("Multifamily Housing", "Office", "Hotel", 
+                        "Retail Store", "Manufacturing/Industrial Plant")
+  
+  if (x=="Floor Area") {
+    if (energy=="Water") {
+      result = df4_floor_area %>% select("Water", "floor_area", "Type") %>% 
+        filter(Type %in% property_types)
+    }
+    if (energy=="Gas") {
+      result = df4_floor_area %>% select("Natural_Gas", "floor_area", "Type") %>% 
+        filter(Type %in% property_types)
+    }
+    if (energy=="Electricity") {
+      result = df4_floor_area %>% select("Electricity", "floor_area", "Type") %>% 
+        filter(Type %in% property_types)
+    }
+  }
+  
+  if (x=="Number of Living Units") {
+    if (energy=="Water") {
+      result = df4_living_units %>% select("Water", "n_living_units", "Type")
+    }
+    if (energy=="Gas") {
+      result = df4_living_units %>% select("Natural_Gas", "n_living_units", "Type")
+    }
+    if (energy=="Electricity") {
+      result = df4_living_units %>% select("Electricity", "n_living_units", "Type")
+    }
+  }
+  
+  return(result)
+}
