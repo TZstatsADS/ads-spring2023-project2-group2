@@ -114,3 +114,57 @@ target_gen =function(year,energy,property){
   }
   return(result)
 }
+
+
+reg_gen = function(x,energy){
+  property_types = list("Multifamily Housing", "Office", "Hotel", 
+                        "Retail Store", "Manufacturing/Industrial Plant")
+  
+  if (x=="Floor Area") {
+    if (energy=="Water") {
+      result = df4_floor_area %>% select("Water", "floor_area", "Type") %>% 
+        filter(Type %in% property_types)
+    }
+    if (energy=="Gas") {
+      result = df4_floor_area %>% select("Natural_Gas", "floor_area", "Type") %>% 
+        filter(Type %in% property_types)
+    }
+    if (energy=="Electricity") {
+      result = df4_floor_area %>% select("Electricity", "floor_area", "Type") %>% 
+        filter(Type %in% property_types)
+    }
+  }
+  
+  if (x=="Number of Living Units") {
+    if (energy=="Water") {
+      result = df4_living_units %>% select("Water", "n_living_units", "Type")
+    }
+    if (energy=="Gas") {
+      result = df4_living_units %>% select("Natural_Gas", "n_living_units", "Type")
+    }
+    if (energy=="Electricity") {
+      result = df4_living_units %>% select("Electricity", "n_living_units", "Type")
+    }
+  }
+  
+  return(result)
+}
+
+
+#define a function to extract necessary data for each year based on energy type
+bar_df <- function(energy_type){
+  if(energy_type=='Water'){
+    #df[df$state %in% c('CA','AZ','PH'),]
+    result=bar_water[bar_water$Type %in% housing_type,]%>% filter(Water != "NA") %>% group_by(year,Type)%>% 
+      summarise(avg_consumption=mean(Water),.groups='drop')
+  }
+  if(energy_type=='Natural_Gas'){
+    result=bar_gas[bar_gas$Type %in% housing_type,]%>% filter(Natural_Gas != "Insufficient access") %>% group_by(year,Type)%>% 
+      summarise(avg_consumption=mean(as.double(Natural_Gas)),.groups='drop')
+  }
+  if(energy_type=='Electricity'){
+    result=bar_electricity[bar_electricity$Type %in% housing_type,]%>% filter(Electricity != "Insufficient access") %>% group_by(year,Type)%>% 
+      summarise(avg_consumption=mean(as.double(Electricity)),.groups='drop')
+  }
+  return(result)
+}
