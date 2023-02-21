@@ -149,3 +149,22 @@ reg_gen = function(x,energy){
   
   return(result)
 }
+
+
+#define a function to extract necessary data for each year based on energy type
+bar_df <- function(energy_type){
+  if(energy_type=='Water'){
+    #df[df$state %in% c('CA','AZ','PH'),]
+    result=bar_water[bar_water$Type %in% housing_type,]%>% filter(Water != "NA") %>% group_by(year,Type)%>% 
+      summarise(avg_consumption=mean(Water),.groups='drop')
+  }
+  if(energy_type=='Natural_Gas'){
+    result=bar_gas[bar_gas$Type %in% housing_type,]%>% filter(Natural_Gas != "Insufficient access") %>% group_by(year,Type)%>% 
+      summarise(avg_consumption=mean(as.double(Natural_Gas)),.groups='drop')
+  }
+  if(energy_type=='Electricity'){
+    result=bar_electricity[bar_electricity$Type %in% housing_type,]%>% filter(Electricity != "Insufficient access") %>% group_by(year,Type)%>% 
+      summarise(avg_consumption=mean(as.double(Electricity)),.groups='drop')
+  }
+  return(result)
+}
