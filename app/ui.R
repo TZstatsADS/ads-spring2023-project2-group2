@@ -122,9 +122,9 @@ sidebar <- dashboardSidebar(
 
     menuItem("Map", tabName = "Map", icon = icon("compass")),
 
-    menuItem("Green Energy", tabName = "Green_Energy", icon = icon("compass")),
-    menuItem("Time Series Analysis", tabName = "Time_Series_Analysis", icon = icon("dollar-sign")),
-    menuItem("Regression Analysis", tabName = "Regression_Analysis", icon = icon("dollar-sign")),
+    menuItem("Green Energy", tabName = "Green_Energy", icon = icon("seedling")),
+    menuItem("Time Series Analysis", tabName = "Time_Series_Analysis", icon = icon("arrow-trend-up")),
+    menuItem("Regression Analysis", tabName = "Regression_Analysis", icon = icon("magnifying-glass-chart")),
     menuItem("Appendix", tabName = "Appendix", icon = icon("fas fa-asterisk"))
   ))
 )
@@ -263,9 +263,10 @@ tabItem(tabName = "Time_Series_Analysis", fluidPage(
 
 tabItem(tabName = "Regression_Analysis",                                                 # Map plot
         fluidPage(
+          titlePanel("Regression Analysis on Energy Consumption"),
           sidebarPanel(
             selectInput("independent_var", label="Choose an independent variable",
-                        choices = c("Floor Area")),
+                        choices = c("Floor Area", "Number of Living Units")),
             selectInput("dependent_var", label="Choose an energy type",
                         choices = c("Water", "Gas", "Electricity")),
           ),

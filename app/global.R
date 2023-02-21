@@ -152,7 +152,8 @@ df4 = data.frame(electricity_consumption = e_21$Electricity.Use...Grid.Purchase.
                  water_consumption = e_21$Water.Use..All.Water.Sources...kgal.,
                  Borough = e_21$Borough,
                  Type = e_21$Primary.Property.Type...Self.Selected,
-                 floor_area=e_21$Property.GFA...Calculated..Buildings...ft..
+                 floor_area=e_21$Property.GFA...Calculated..Buildings...ft..,
+                 n_living_units=e_21$Multifamily.Housing...Total.Number.of.Residential.Living.Units
 )
 colnames(df4)[1] <- "Electricity"
 colnames(df4)[2] <- "Natural_Gas"
@@ -207,8 +208,17 @@ df4_floor_area$Natural_Gas = suppressWarnings(as.numeric(as.character(df4_floor_
 df4_floor_area$Electricity = suppressWarnings(as.numeric(as.character(df4_floor_area$Electricity)))
 df4_floor_area[1:4] <- log(df4_floor_area[1:4])
 df4_floor_area <- df4_floor_area[!is.infinite(rowSums(df4_floor_area[1:4])),]
+df4_floor_area <- df4_floor_area[!is.na(df4_floor_area["Electricity"]), ]
+df4_floor_area <- df4_floor_area[!is.na(df4_floor_area["Natural_Gas"]), ]
 
-
+df4_living_units = df4 %>% select("Water", "Natural_Gas", "Electricity", "n_living_units", "Type") %>% drop_na()
+df4_living_units$Natural_Gas = suppressWarnings(as.numeric(as.character(df4_living_units$Natural_Gas)))
+df4_living_units$Electricity = suppressWarnings(as.numeric(as.character(df4_living_units$Electricity)))
+df4_living_units[1:4] <- log(df4_living_units[1:4])
+df4_living_units <- df4_living_units[df4_living_units["Type"]=="Multifamily Housing", ]
+df4_living_units <- df4_living_units[!is.infinite(rowSums(df4_living_units[1:4])),]
+df4_living_units <- df4_living_units[!is.na(df4_living_units["Electricity"]), ]
+df4_living_units <- df4_living_units[!is.na(df4_living_units["Natural_Gas"]), ]
 
 #----------------bar plot data--------------------------
 

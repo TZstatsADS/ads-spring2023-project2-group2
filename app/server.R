@@ -135,17 +135,32 @@ target_gen =function(year,energy,property){
 reg_gen = function(x,energy){
   property_types = list("Multifamily Housing", "Office", "Hotel", 
                         "Retail Store", "Manufacturing/Industrial Plant")
-  if (energy=="Water") {
-    result = df4_floor_area %>% select("Water", "floor_area", "Type") %>% 
-          filter(Type %in% property_types)
+  
+  if (x=="Floor Area") {
+    if (energy=="Water") {
+      result = df4_floor_area %>% select("Water", "floor_area", "Type") %>% 
+        filter(Type %in% property_types)
+    }
+    if (energy=="Gas") {
+      result = df4_floor_area %>% select("Natural_Gas", "floor_area", "Type") %>% 
+        filter(Type %in% property_types)
+    }
+    if (energy=="Electricity") {
+      result = df4_floor_area %>% select("Electricity", "floor_area", "Type") %>% 
+        filter(Type %in% property_types)
+    }
   }
-  if (energy=="Gas") {
-    result = df4_floor_area %>% select("Natural_Gas", "floor_area", "Type") %>% 
-    filter(Type %in% property_types)
-  }
-  if (energy=="Electricity") {
-    result = df4_floor_area %>% select("Electricity", "floor_area", "Type") %>% 
-    filter(Type %in% property_types)
+  
+  if (x=="Number of Living Units") {
+    if (energy=="Water") {
+      result = df4_living_units %>% select("Water", "n_living_units", "Type")
+    }
+    if (energy=="Gas") {
+      result = df4_living_units %>% select("Natural_Gas", "n_living_units", "Type")
+    }
+    if (energy=="Electricity") {
+      result = df4_living_units %>% select("Electricity", "n_living_units", "Type")
+    }
   }
   
   return(result)
@@ -261,31 +276,49 @@ shinyServer(function(input, output) {
     mynamestheme <- theme(plot.title = element_text(family = "Helvetica", face = "bold", size = (20)),
                           axis.title = element_text(family = "Helvetica", size = (15), colour = "steelblue4"))
     
-    ggplot(data = df, mapping = aes(x = floor_area, y = Water, color=Type)) +
-      geom_point(alpha = 0.1) + geom_smooth(method=lm, se=FALSE) +
-      labs(title=paste("Relationship between", X, "and", Y, "usage"),
-           y="Water Usage (log kGal)", x="Floor Area (log square ft)") + mynamestheme
-    
     if (X=="Floor Area"){
       if (Y == "Water") {
-        g = ggplot(data = df, mapping = aes(x = floor_area, y = Water, color=Type)) +
-          geom_point(alpha = 0.1) + geom_smooth(method=lm, se=FALSE) +
+        g = ggplot(data = df, mapping = aes(x = floor_area, y = Water, color=Type)) + 
+          geom_point(alpha = 0.1) + geom_smooth(formula = y ~ x, method=lm, se=FALSE) +
           labs(title=paste("Relationship between", X, "and", Y, "usage"),
                y="Water Usage (log kGal)", x="Floor Area (log square ft)") + mynamestheme
       }
       
       if (Y == "Electricity") {
         g = ggplot(data = df, mapping = aes(x = floor_area, y = Electricity, color=Type)) +
-          geom_point(alpha = 0.1) + geom_smooth(method=lm, se=FALSE) +
+          geom_point(alpha = 0.1) + geom_smooth(formula = y ~ x, method=lm, se=FALSE) +
           labs(title=paste("Relationship between", X, "and", Y, "usage"),
-               y="Electricity Usage (log kGal)", x="Floor Area (log square ft)") + mynamestheme
+               y="Electricity Usage (log kWh)", x="Floor Area (log square ft)") + mynamestheme
       }
       
       if (Y == "Gas") {
         g = ggplot(data = df, mapping = aes(x = floor_area, y = Natural_Gas, color=Type)) +
-          geom_point(alpha = 0.1) + geom_smooth(method=lm, se=FALSE) +
+          geom_point(alpha = 0.1) + geom_smooth(formula = y ~ x, method=lm, se=FALSE) +
           labs(title=paste("Relationship between", X, "and", Y, "usage"),
-               y="Gas Usage (log kGal)", x="Floor Area (log square ft)") + mynamestheme
+               y="Gas Usage (log kBtu)", x="Floor Area (log square ft)") + mynamestheme
+      }
+    }
+    
+    if (X=="Number of Living Units"){
+      if (Y == "Water") {
+        g = ggplot(data = df, mapping = aes(x = n_living_units, y = Water)) +
+          geom_point(alpha = 0.1) + geom_smooth(formula = y ~ x, method=lm) +
+          labs(title=paste("Relationship between", X, "and", Y, "usage"),
+               y="Water Usage (log kGal)", x="Log Number of Residential Units per Building") + mynamestheme
+      }
+      
+      if (Y == "Electricity") {
+        g = ggplot(data = df, mapping = aes(x = n_living_units, y = Electricity)) +
+          geom_point(alpha = 0.1) + geom_smooth(formula = y ~ x, method=lm) +
+          labs(title=paste("Relationship between", X, "and", Y, "usage"),
+               y="Electricity Usage (log kWh)", x="Log Number of Residential Units per Building") + mynamestheme
+      }
+      
+      if (Y == "Gas") {
+        g = ggplot(data = df, mapping = aes(x = n_living_units, y = Natural_Gas)) +
+          geom_point(alpha = 0.1) + geom_smooth(formula = y ~ x, method=lm) +
+          labs(title=paste("Relationship between", X, "and", Y, "usage"),
+               y="Gas Usage (log kBtu)", x="Log Number of Residential Units per Building") + mynamestheme
       }
     }
     g
