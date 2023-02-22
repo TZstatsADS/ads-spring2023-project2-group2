@@ -260,7 +260,7 @@ bar3_gas$year <-2020
 bar4_gas <- df4_gas
 bar4_gas$year <-2021
 
-housing_type <- c("Office", "Multifamily Housing","Hotel","Retail Store","Manufacturing/Industrial Plant")
+housing_type <- c("Office", "Multifamily Housing","Retail Store","Manufacturing/Industrial Plant")
 
 #combining four years together
 

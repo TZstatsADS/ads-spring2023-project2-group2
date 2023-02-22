@@ -106,7 +106,23 @@ shinyServer(function(input, output) {
     User_Input = input$Energy_Type
     plot_df <- bar_df(User_Input)
     
-    ggplot(data =plot_df, aes(x=year, y=avg_consumption)) + geom_line(aes(colour=Type))
+    
+    
+    if(User_Input=="Water"){
+      result_plot <- ggplot(data =plot_df, aes(x=year, y=avg_consumption))+labs(x="Year", y="Avg_consumption(kgal)")+ geom_line(aes(colour=Type))
+    }
+    
+    if(User_Input=="Electricity"){
+      result_plot <-ggplot(data =plot_df, aes(x=year, y=avg_consumption))+labs(x="Year", y="Avg_consumption(kWh)")+ geom_line(aes(colour=Type))
+    }
+    
+    if(User_Input=="Natural_Gas"){
+      result_plot <-ggplot(data =plot_df, aes(x=year, y=avg_consumption))+labs(x="Year", y="Avg_consumption(kBtu)")+ geom_line(aes(colour=Type))
+    }
+    
+    return(result_plot)
+    
+    
     
   })
   
