@@ -21,7 +21,7 @@ The **learning goals** for this project is:
 ## Project Title Lorem ipsum dolor sit amet
 Term: Spring 2023
 
-+ Team #
++ Team #2
 + **Projec title**: + Team members
 	+ Chenghao Lu
 	+ Tianxiao He
