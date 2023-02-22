@@ -153,7 +153,7 @@ body <- dashboardBody(
                    h5("Tianxiao He, on the other hand, was responsible for conducting regression analysis on energy consumption across various variables. "),
                    h5("Additionally, Tianxiao He designed the UI of the appendix page. "),
                    h5("Finally, Shengqi Cao deployed our project on the shinyapps.io for broader use."),
-                   h5("Chenyi Jiang are responsible for presenting the project.")
+                   h5("Chenyi Jiang is responsible for presenting the project.")
                   )),
       fluidRow(box(width = 15, title = "How to Use The App", status = "success",
                    solidHeader = TRUE, 

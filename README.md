@@ -23,15 +23,18 @@ Term: Spring 2023
 
 + Team #
 + **Projec title**: + Team members
-	+ team member 1
-	+ team member 2
-	+ team member 3
-	+ team member 4
-	+ team member 5
+	+ Chenghao Lu
+	+ Tianxiao He
+	+ Chenbohan Zhang
+	+ Yuxin Liang
+	+ Shengqi Cao
+	+ Chenyi Jiang
 
-+ **Project summary**: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
++ **Project summary**: 
+Collecting data from Mayor's Office of Climate and Sustainability, this application provides insight into how coronavirus impacted energy consumption in New York’s city in year 2018-2021. 
+It also provides a comprehensive overview of how energy consumption in New York City changed in response to the COVID-19 pandemic, and sheds light on the potential opportunities and challenges for achieving a more sustainable and resilient energy system in the future.
 
-+ **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
++ **Contribution statement**: ([default](doc/a_note_on_contributions.md)) Chenbohan Zhang was responsible for completing the user interface (UI) of the home page.In the section dedicated to the heat map, Chenghao Lu submitted a well-constructed draft of the heat map code. Shengqi Cao improved the performance of the page's UI file, while Yuxin Liang organized and separated Chenghao's code into global.r and helperfunction.r files. In addition to this, Yuxin Liang also carried out the visualization of green energy usage in buildings over a four-year period. Furthermore, Chenbohan Zhang conducted time series analysis on energy consumption patterns during and after the COVID-19 pandemic. Tianxiao He, on the other hand, was responsible for conducting regression analysis on energy consumption across various variables. Additionally, Tianxiao He designed the UI of the appendix page. Finally, Shengqi Cao deployed our project on the shinyapps.io for broader use. Chenyi Jiang is responsible for presenting the project.
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
